@@ -36,12 +36,17 @@ function fillPost(post){
     let content = 
         `
             <div id="post" class="post w-2/3 border-1 border-indigo-800 mx-auto my-10 rounded-2xl shadow-indigo-200 shadow-xl px-10 " >
-                <div class="user flex justify-start items-center py-2 gap-2">
-                    <div class="profil-pic w-14 h-14 rounded-full overflow-hidden">
-                        <img src="${profileImage}" alt="" class="w-full h-full object-center object-cover">
+                <div class="flex justify-between items-center ">
+                    <div class="flex justify-start items-center py-2 gap-2">
+                        <div class="profil-pic w-14 h-14 rounded-full overflow-hidden">
+                            <img src="${profileImage}" alt="" class="w-full h-full object-center object-cover">
+                        </div>
+                        <p class="user-name text-xl">${userName}</p>
+                        
                     </div>
-                    <p class="user-name text-xl">${userName}</p>
+                    <i id="edit-post-btn" class="fa-solid fa-ellipsis text-2xl cursor-pointer text-gray-700" onclick="editPostBtnClicked('${encodeURIComponent(JSON.stringify(post))}')"></i>
                 </div>
+                
                 <hr class=" mb-2 border-gray-300 ">
                 <div class="card-body  cursor-pointer" onclick="postClicked(${post.id})">
                     <div class=" w-full h-80 ">
@@ -163,3 +168,15 @@ function postClicked(postId){
     // alert(postId)
 }
 // -- END POST CLICKED --
+
+// -- START EDIT POST --
+function editPostBtnClicked(postObject){
+
+    let post = JSON.parse(decodeURIComponent(postObject))
+    document.getElementById("post-modal-title").innerHTML = "Edit Post"
+    document.getElementById("post-title").value = post.title
+    document.getElementById("post-body").value = post.body
+    // Open the modal Deaktop
+    addPostModel.classList.remove("hidden");
+}
+// -- END EDIT POST --
