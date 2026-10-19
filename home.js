@@ -33,6 +33,13 @@ function fillPost(post){
     let createdAt = post.created_at
 
     
+    // show or hide (edit) button
+    let user = getCurrentUser()
+    let isMyPost = user != null && user.id == post.author.id 
+    let editBtnContent = ``
+    if(isMyPost){
+        editBtnContent = `<i id="edit-post-btn" class="fa-solid fa-ellipsis text-2xl cursor-pointer text-gray-700" onclick="editPostBtnClicked('${encodeURIComponent(JSON.stringify(post))}')"></i>`
+    }
     let content = 
         `
             <div id="post" class="post w-2/3 border-1 border-indigo-800 mx-auto my-10 rounded-2xl shadow-indigo-200 shadow-xl px-10 " >
@@ -44,7 +51,7 @@ function fillPost(post){
                         <p class="user-name text-xl">${userName}</p>
                         
                     </div>
-                    <i id="edit-post-btn" class="fa-solid fa-ellipsis text-2xl cursor-pointer text-gray-700" onclick="editPostBtnClicked('${encodeURIComponent(JSON.stringify(post))}')"></i>
+                    ${editBtnContent}
                 </div>
                 
                 <hr class=" mb-2 border-gray-300 ">
@@ -87,16 +94,16 @@ function fillPost(post){
 // -- END GET ALL POSTS--
 
 // --START MODEL AND ALERT---
-const addPostButton = document.querySelector("#add-post-btn");
+// const addPostButton = document.querySelector("#add-post-btn");
 const closePostModal = document.querySelector("#close-post-modal");
 
 const addPostModel = document.querySelector("#add-post-modal");
 const addPostContent = document.querySelector("#add-post-content");
 
 // Open the modal Deaktop
-addPostButton.addEventListener("click", () => {
-    addPostModel.classList.remove("hidden");
-});
+// addPostButton.addEventListener("click", () => {
+//     addPostModel.classList.remove("hidden");
+// });
 
 
 // Close the modal using the X button
@@ -167,29 +174,30 @@ function createNewPost(){
         formData.append("_method","put")
         url= `${baseUrl}/posts/${postId}`
         axios.post(url,formData,{
-        headers:headers
-    })
-    .then((response)=>{
-
-        // Close the login Modal
-        addPostModel.classList.add("hidden");
-        getAllPosts()
-        // Show success alert
-        showAlert(
-            "Post edited successfuly!",
-            "Your Post Has Been Edited",
-            "success"
-        );
-
+            headers:headers
         })
-        .catch((error) => {
-            const message = error.response.data.message
+        .then((response)=>{
+
+            // Close the login Modal
+            addPostModel.classList.add("hidden");
+            getAllPosts()
+            // Show success alert
             showAlert(
-                "Failed to add the post",
-                message,
-                "error"
+                "Post edited successfuly!",
+                "Your Post Has Been Edited",
+                "success"
             );
-        });
+
+            })
+            .catch((error) => {
+                const message = error.response.data.message
+                showAlert(
+                    "Failed to add the post",
+                    message,
+                    "error"
+                );
+            }
+    );
     }
     
 
@@ -218,3 +226,13 @@ function editPostBtnClicked(postObject){
     addPostModel.classList.remove("hidden");
 }
 // -- END EDIT POST --
+
+function addBtnClicked(){
+    document.getElementById("post-id-input").value = ""
+    document.getElementById("post-modal-title").innerHTML = "Add Post"
+    document.getElementById("post-title").value = ""
+    document.getElementById("post-body").value = ""
+    document.getElementById("add-edit-post-btn").innerHTML = "Add"
+    // Open the modal Deaktop
+    addPostModel.classList.remove("hidden");
+}
