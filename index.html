@@ -218,7 +218,7 @@
             <h2 id="post-modal-title" class="mb-6 text-center text-2xl font-semibold text-gray-800">
                     Add Post
             </h2>
-                
+                <input type="hidden" id="post-id-input" value="">
                 <label for="title">Title</label>
                 <input
                     id="post-title"
@@ -226,7 +226,7 @@
                     type="text"
                     placeholder="Title"
                     required
-                    class="mt-1 w-full rounded border border-gray-500/30
+                    class="mt-1 w-full text-gray-900 rounded border border-gray-500/30
                         p-2 outline-none focus:border-indigo-500"
                 >
 
@@ -238,7 +238,7 @@
                     rows="4"
                     placeholder="Body"
                     required
-                    class="mt-1 w-full rounded border border-gray-500/30
+                    class="mt-1 w-full text-gray-900 rounded border border-gray-500/30
                         p-2 outline-none focus:border-indigo-500"
                 ></textarea>
                 
@@ -247,12 +247,13 @@
                     id="post-image"
                     name="post-image"
                     type="file"
-                    class="mt-1 w-full rounded border border-gray-500/30
+                    class="mt-1 w-full  rounded border border-gray-500/30
                         p-2 outline-none focus:border-indigo-500"
                 >
 
                 <button
-                    onclick="addPost()"
+                    id="add-edit-post-btn"
+                    onclick="createNewPost()"
                     class="my-4 w-full rounded bg-indigo-500 py-2.5
                         text-white transition hover:bg-indigo-600
                         active:scale-95"

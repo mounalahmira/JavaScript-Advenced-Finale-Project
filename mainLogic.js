@@ -124,8 +124,8 @@ menuButtons.forEach((btn, index) => {
 // -- START INFINIT SCROLL --
 window.addEventListener("scroll", ()=>{
     const endOfPage = window.innerHeight + window.pageYOffset >= document.body.offsetHeight
-    console.log(currentPage)
-    console.log(lastPage)
+    // console.log(currentPage)
+    // console.log(lastPage)
     if(endOfPage && currentPage < lastPage){
         currentPage += 1
         getAllPosts(false,currentPage)

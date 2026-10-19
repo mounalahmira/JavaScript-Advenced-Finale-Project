@@ -118,7 +118,11 @@ document.addEventListener("keydown", (event) => {
     }
 });
 // --START ADD POST--
-function addPost(){
+function createNewPost(){
+    let postId = document.getElementById("post-id-input").value
+    let isCreate = postId == null || postId == ""
+    // alert(isCreate)
+    
     const title =  document.getElementById("post-title").value
     const body = document.getElementById("post-body").value
     const image = document.getElementById("post-image").files[0]
@@ -132,10 +136,10 @@ function addPost(){
     const headers = {
         "authorization":`Bearer ${token}`
     }
-
-    const url= `${baseUrl}/posts`
-
-    axios.post(url,formData,{
+    let url = ""
+    if (isCreate) {
+        url= `${baseUrl}/posts`
+        axios.post(url,formData,{
         headers:headers
     })
     .then((response)=>{
@@ -159,6 +163,37 @@ function addPost(){
                 "error"
             );
         });
+    }else{
+        formData.append("_method","put")
+        url= `${baseUrl}/posts/${postId}`
+        axios.post(url,formData,{
+        headers:headers
+    })
+    .then((response)=>{
+
+        // Close the login Modal
+        addPostModel.classList.add("hidden");
+        getAllPosts()
+        // Show success alert
+        showAlert(
+            "Post edited successfuly!",
+            "Your Post Has Been Edited",
+            "success"
+        );
+
+        })
+        .catch((error) => {
+            const message = error.response.data.message
+            showAlert(
+                "Failed to add the post",
+                message,
+                "error"
+            );
+        });
+    }
+    
+
+    
 }
 // -- END ADD POST --
 
@@ -173,9 +208,12 @@ function postClicked(postId){
 function editPostBtnClicked(postObject){
 
     let post = JSON.parse(decodeURIComponent(postObject))
+    
+    document.getElementById("post-id-input").value = post.id
     document.getElementById("post-modal-title").innerHTML = "Edit Post"
     document.getElementById("post-title").value = post.title
     document.getElementById("post-body").value = post.body
+    document.getElementById("add-edit-post-btn").innerHTML = "Edit"
     // Open the modal Deaktop
     addPostModel.classList.remove("hidden");
 }
