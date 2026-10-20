@@ -38,7 +38,12 @@ function fillPost(post){
     let isMyPost = user != null && user.id == post.author.id 
     let editBtnContent = ``
     if(isMyPost){
-        editBtnContent = `<i id="edit-post-btn" class="fa-solid fa-ellipsis text-2xl cursor-pointer text-gray-700" onclick="editPostBtnClicked('${encodeURIComponent(JSON.stringify(post))}')"></i>`
+        editBtnContent = `
+            <div class="flex justify-center items-center  gap-2" >  
+                <i id="edit-post-btn" class="fa-solid fa-ellipsis text-2xl cursor-pointer text-gray-700" onclick="editPostBtnClicked('${encodeURIComponent(JSON.stringify(post))}')"></i>
+                <i class="fa-solid fa-trash text-xl cursor-pointer text-gray-700" onclick="deletPostClicked('${encodeURIComponent(JSON.stringify(post))}')"></i> 
+            </div>
+        `
     }
     let content = 
         `
@@ -198,10 +203,7 @@ function createNewPost(){
                 );
             }
     );
-    }
-    
-
-    
+    } 
 }
 // -- END ADD POST --
 
@@ -235,4 +237,58 @@ function addBtnClicked(){
     document.getElementById("add-edit-post-btn").innerHTML = "Add"
     // Open the modal Deaktop
     addPostModel.classList.remove("hidden");
+}
+
+// -- START DELETE POST --
+const deletePostModal = document.querySelector("#delete-post-modal");
+
+const deletePostModalContent = document.querySelector("#delete-post-content");
+
+// Close the modal using the X button
+deletePostModalContent.addEventListener("click", () => {
+    deletePostModal.classList.add("hidden");
+});
+
+// Close when clicking outside the form
+deletePostModal.addEventListener("click", (event) => {
+    if (!deletePostModalContent.contains(event.target)) {
+        deletePostModal.classList.add("hidden");
+    }
+});
+
+function deletPostClicked(postObject){
+
+    let post = JSON.parse(decodeURIComponent(postObject))
+    console.log(post.id)
+    document.getElementById("delete-post-id-input").value = post.id
+
+    deletePostModal.classList.remove("hidden");
+}
+function confirmPostDelete(){
+    let postId = document.getElementById("delete-post-id-input").value
+
+    const url= `${baseUrl}/posts/${postId}`
+    const token = localStorage.getItem("token")
+    const headers = {
+        "authorization":`Bearer ${token}`
+    }
+    axios.delete(url,{
+        headers:headers
+    })
+    .then((response)=>{
+        getAllPosts()
+        // Show success alert
+        showAlert(
+            "Post Deleted Successfuly",
+            "Post Deleted Successfuly!",
+            "success"
+        );
+
+    }).catch((error) => {
+            showAlert(
+                "Post Deleted Failed",
+                "Post Deleted Failed",
+                "error"
+            );
+        });
 }
