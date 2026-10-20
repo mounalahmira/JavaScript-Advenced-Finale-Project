@@ -2,45 +2,8 @@ const baseUrl = "https://tarmeezacademy.com/api/v1"
 let currentPage = 1
 let lastPage = 1
 
-// --START MODEL ---
-const openButtonDesktop = document.querySelector("#openLoginDesktop");
-// const openButtonMobile = document.querySelector("#openLoginMobile");
-const closeButton = document.querySelector("#closeLogin");
-
-const loginModal = document.querySelector("#loginModal");
-const loginModalContent = document.querySelector("#loginContent");
-
-// Open the modal Deaktop
-openButtonDesktop.addEventListener("click", () => {
-    loginModal.classList.remove("hidden");
-});
-
-
-
-// Close the modal using the X button
-closeButton.addEventListener("click", () => {
-    loginModal.classList.add("hidden");
-});
-
-// Close when clicking outside the form
-loginModal.addEventListener("click", (event) => {
-    if (!loginModalContent.contains(event.target)) {
-        loginModal.classList.add("hidden");
-    }
-});
-
-// Close when pressing Escape
-document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-        loginModal.classList.add("hidden");
-    }
-});
-
-// --END MODEL AND --
-
-
-// -- START ALERT --
-const alertBox = document.querySelector("#loginAlert");
+// === START ALERT ===
+const alertBox = document.querySelector("#alertBox");
 const alertTitle = document.querySelector("#alertTitle");
 const alertMessage = document.querySelector("#alertMessage");
 const closeAlert = document.querySelector("#closeAlert");
@@ -109,8 +72,9 @@ function hideAlert() {
 
 // Close the alert when clicking X
 closeAlert.addEventListener("click", hideAlert);
-// -- END ALERT -- 
-// NAVBAR
+// === END ALERT === 
+
+// === START NAVBAR ===
 const menuButtons = document.querySelectorAll('.menu-btn');
 const mobileMenus = document.querySelectorAll('.mobile-menu');
 
@@ -119,23 +83,30 @@ menuButtons.forEach((btn, index) => {
         mobileMenus[index].classList.toggle('hidden');
     });
 });
-// NAVBAR
+// === END NAVBAR ===
 
-// -- START INFINIT SCROLL --
+// === START INFINIT SCROLL ===
 window.addEventListener("scroll", ()=>{
     const endOfPage = window.innerHeight + window.pageYOffset >= document.body.offsetHeight
-    // console.log(currentPage)
-    // console.log(lastPage)
     if(endOfPage && currentPage < lastPage){
         currentPage += 1
         getAllPosts(false,currentPage)
-
     }
-
 })
-// -- END INFINIT SCROLL --
+// === END INFINIT SCROLL ===
 
-// -- START SETUPUI --
+// ===== START GET USER =====
+function getCurrentUser(){
+    let user = null
+    const storageUser = localStorage.getItem("user")
+    if(storageUser != null){
+        user = JSON.parse(storageUser)
+    }
+    // console.log(user)
+    return user
+}
+// ===== END GET USER =====
+// === START SETUPUI ===
 function setupUI(){
     const loggedIndivDesktop = document.getElementById("logged-in-div")
     const currentUserDiv = document.getElementById("current-user-div")
@@ -179,9 +150,37 @@ function setupUI(){
     }
 }
 setupUI()
-// -- END SETUPUI --
+// === END SETUPUI ===
 
-// --START LOGIN--
+// ==== START LOGIN ====
+// -- START LOGING MODEL --
+const openButtonDesktop = document.querySelector("#openLoginDesktop");
+const closeButton = document.querySelector("#close");
+const loginModal = document.querySelector("#loginModal");
+const loginModalContent = document.querySelector("#loginContent");
+
+// Open the modal Deaktop
+openButtonDesktop.addEventListener("click", () => {
+    loginModal.classList.remove("hidden");
+});
+// Close the modal using the X button
+closeButton.addEventListener("click", () => {
+    loginModal.classList.add("hidden");
+});
+// Close when clicking outside the form
+loginModal.addEventListener("click", (event) => {
+    if (!loginModalContent.contains(event.target)) {
+        loginModal.classList.add("hidden");
+    }
+});
+// Close when pressing Escape
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+        loginModal.classList.add("hidden");
+    }
+});
+// -- END LOGING MODEL AND --
+
 function login(){
     const username =  document.getElementById("username").value
     const password = document.getElementById("password").value
@@ -191,7 +190,6 @@ function login(){
     }
 
     const url= `${baseUrl}/login`
-
     axios.post(url,params)
     .then((response)=>{
         console.log(response.data.token)
@@ -219,10 +217,10 @@ function login(){
             );
         });
 }
-// --END LOGIN--
+// ==== END LOGIN ====
 
 // =====REGISTER =====
-// --START MODEL AND ALERT---
+// --START REGISTER MODEL ---
 const regesterButtonDesktop = document.querySelector("#openRegesterDesktop");
 const closeRegesterModal = document.querySelector("#closeRegester");
 
@@ -233,7 +231,6 @@ const regesterContent = document.querySelector("#regesterContent");
 regesterButtonDesktop.addEventListener("click", () => {
     regesterModal.classList.remove("hidden");
 });
-
 
 // Close the modal using the X button
 closeRegesterModal.addEventListener("click", () => {
@@ -254,10 +251,10 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
-// --END MODEL AND ALERT--
+// --END REGISTER MODEL --
 
 
-// --START LOGIN--
+// --START REGISTER --
 function regester(){
     const profileImage = document.getElementById("profile-image").files[0]
     const name =  document.getElementById("regester-name").value
@@ -300,22 +297,13 @@ function regester(){
             );
         });
 }
-// =====REGISTER =====
+// -- END REGISTER --
+// ===== REGISTER =====
 
 
 
-// -- START GET USER --
-function getCurrentUser(){
-    let user = null
-    const storageUser = localStorage.getItem("user")
-    if(storageUser != null){
-        user = JSON.parse(storageUser)
-    }
-    return user
 
-}
-// -- END GET USER --
-// -- START LOGOUT --
+// ===== START LOGOUT =====
 function logout(){
     localStorage.removeItem("token")
     localStorage.removeItem("user")
@@ -327,9 +315,87 @@ function logout(){
         );
     setupUI()
 }
-// -- END LOGOUT --
+// === END LOGOUT ===
 
+// === START POST CLICKED === 
+function postClicked(postId){
+    window.location = `postDetails.html?postId=${postId}`
+    // alert(postId)
+}
+// === END POST CLICKED ===
+// === START USER CLICKED === 
+function userClicked(userId){
+    window.location = `profile.html?userId=${userId}`
+    // alert(postId)
+}
+// === END USER CLICKED ===
 
-// -- START ADD POST --
+// === START PROFILE CLICKED ===
+function profileClicked(){
+    const user = getCurrentUser()
+    console.log(user.id)
+    window.location = `profile.html?userId=${user.id}`
+}
+// === END PROFILE CLICKED ===
+
+// ==== START DELETE POST ====
+// --- START DELETE MODAL
+const deletePostModal = document.querySelector("#delete-post-modal");
+const deletePostModalContent = document.querySelector("#delete-post-content");
+
+// Close the modal using the X button
+deletePostModalContent.addEventListener("click", () => {
+    deletePostModal.classList.add("hidden");
+});
+// Close when clicking outside the form
+deletePostModal.addEventListener("click", (event) => {
+    if (!deletePostModalContent.contains(event.target)) {
+        deletePostModal.classList.add("hidden");
+    }
+});
+// --- END DELETE MODAL ---
+// --- START CLICK DELETE POST ---
+function deletPostClicked(postObject){
+
+    let post = JSON.parse(decodeURIComponent(postObject))
+    console.log(post.id)
+    document.getElementById("delete-post-id-input").value = post.id
+
+    deletePostModal.classList.remove("hidden");
+}
+// --- END CLICK DELETE POST ---
+
+// -- START CONFIRM DELETE POST --
+function confirmPostDelete(){
+    let postId = document.getElementById("delete-post-id-input").value
+    
+    const url= `${baseUrl}/posts/${postId}`
+    const token = localStorage.getItem("token")
+    const headers = {
+        "authorization":`Bearer ${token}`
+    }
+    axios.delete(url,{
+        headers:headers
+    })
+    .then((response)=>{
+        getAllPosts()
+        // Show success alert
+        showAlert(
+            "Post Deleted Successfuly",
+            "Post Deleted Successfuly!",
+            "success"
+        );
+
+    }).catch((error) => {
+            showAlert(
+                "Post Deleted Failed",
+                "Post Deleted Failed",
+                "error"
+            );
+        });
+}
+// -- END CONFIRM DELETE POST --
+// === END DELETE POST ===
+
 
 

@@ -1,6 +1,6 @@
 getAllPosts()
 
-// --START GET ALL POSTS--
+// ===== START GET ALL POSTS =====
 function getAllPosts(reload = true,page = 1){
     const url= `${baseUrl}/posts?limit=2&page=${page}`
     axios.get(url)
@@ -20,6 +20,7 @@ function getAllPosts(reload = true,page = 1){
         console.log("Request completed");
     });
 }
+// -- START FILL POST --
 function fillPost(post){
     let userName = post.author.username
     let profileImage = post.author.profile_image
@@ -37,6 +38,7 @@ function fillPost(post){
     let user = getCurrentUser()
     let isMyPost = user != null && user.id == post.author.id 
     let editBtnContent = ``
+  
     if(isMyPost){
         editBtnContent = `
             <div class="flex justify-center items-center  gap-2" >  
@@ -48,13 +50,12 @@ function fillPost(post){
     let content = 
         `
             <div id="post" class="post w-2/3 border-1 border-indigo-800 mx-auto my-10 rounded-2xl shadow-indigo-200 shadow-xl px-10 " >
-                <div class="flex justify-between items-center ">
-                    <div class="flex justify-start items-center py-2 gap-2">
+                <div onclick="userClicked(${post.author.id})" class="flex justify-between items-center ">
+                    <div on class="flex justify-start items-center cursor-pointer  py-2 gap-2">
                         <div class="profil-pic w-14 h-14 rounded-full overflow-hidden">
                             <img src="${profileImage}" alt="" class="w-full h-full object-center object-cover">
                         </div>
-                        <p class="user-name text-xl">${userName}</p>
-                        
+                        <p class="user-name text-xl">${userName}</p>   
                     </div>
                     ${editBtnContent}
                 </div>
@@ -96,20 +97,13 @@ function fillPost(post){
     }
     
 }
-// -- END GET ALL POSTS--
+// -- START FILL POST --
+// ===== END GET ALL POSTS =====
 
-// --START MODEL AND ALERT---
-// const addPostButton = document.querySelector("#add-post-btn");
+// ===== START CREAT POST MODEL =====
 const closePostModal = document.querySelector("#close-post-modal");
-
 const addPostModel = document.querySelector("#add-post-modal");
 const addPostContent = document.querySelector("#add-post-content");
-
-// Open the modal Deaktop
-// addPostButton.addEventListener("click", () => {
-//     addPostModel.classList.remove("hidden");
-// });
-
 
 // Close the modal using the X button
 closePostModal.addEventListener("click", () => {
@@ -129,11 +123,12 @@ document.addEventListener("keydown", (event) => {
         addPostModel.classList.add("hidden");
     }
 });
-// --START ADD POST--
+// ===== END CREAT POST MODEL =====
+
+// === START CREAT POST ===
 function createNewPost(){
     let postId = document.getElementById("post-id-input").value
     let isCreate = postId == null || postId == ""
-    // alert(isCreate)
     
     const title =  document.getElementById("post-title").value
     const body = document.getElementById("post-body").value
@@ -155,8 +150,6 @@ function createNewPost(){
         headers:headers
     })
     .then((response)=>{
-
-        // Close the login Modal
         addPostModel.classList.add("hidden");
         getAllPosts()
         // Show success alert
@@ -205,18 +198,10 @@ function createNewPost(){
     );
     } 
 }
-// -- END ADD POST --
+// === END CREAT POST ===
 
-// -- START POST CLICKED -- 
-function postClicked(postId){
-    window.location = `postDetails.html?postId=${postId}`
-    // alert(postId)
-}
-// -- END POST CLICKED --
-
-// -- START EDIT POST --
+// === START EDIT POST ===
 function editPostBtnClicked(postObject){
-
     let post = JSON.parse(decodeURIComponent(postObject))
     
     document.getElementById("post-id-input").value = post.id
@@ -227,8 +212,9 @@ function editPostBtnClicked(postObject){
     // Open the modal Deaktop
     addPostModel.classList.remove("hidden");
 }
-// -- END EDIT POST --
+// === END EDIT POST ===
 
+// === START CREAT BTN POST ===
 function addBtnClicked(){
     document.getElementById("post-id-input").value = ""
     document.getElementById("post-modal-title").innerHTML = "Add Post"
@@ -238,57 +224,5 @@ function addBtnClicked(){
     // Open the modal Deaktop
     addPostModel.classList.remove("hidden");
 }
+// === START CREAT BTN POST ===
 
-// -- START DELETE POST --
-const deletePostModal = document.querySelector("#delete-post-modal");
-
-const deletePostModalContent = document.querySelector("#delete-post-content");
-
-// Close the modal using the X button
-deletePostModalContent.addEventListener("click", () => {
-    deletePostModal.classList.add("hidden");
-});
-
-// Close when clicking outside the form
-deletePostModal.addEventListener("click", (event) => {
-    if (!deletePostModalContent.contains(event.target)) {
-        deletePostModal.classList.add("hidden");
-    }
-});
-
-function deletPostClicked(postObject){
-
-    let post = JSON.parse(decodeURIComponent(postObject))
-    console.log(post.id)
-    document.getElementById("delete-post-id-input").value = post.id
-
-    deletePostModal.classList.remove("hidden");
-}
-function confirmPostDelete(){
-    let postId = document.getElementById("delete-post-id-input").value
-
-    const url= `${baseUrl}/posts/${postId}`
-    const token = localStorage.getItem("token")
-    const headers = {
-        "authorization":`Bearer ${token}`
-    }
-    axios.delete(url,{
-        headers:headers
-    })
-    .then((response)=>{
-        getAllPosts()
-        // Show success alert
-        showAlert(
-            "Post Deleted Successfuly",
-            "Post Deleted Successfuly!",
-            "success"
-        );
-
-    }).catch((error) => {
-            showAlert(
-                "Post Deleted Failed",
-                "Post Deleted Failed",
-                "error"
-            );
-        });
-}
