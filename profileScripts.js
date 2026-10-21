@@ -1,12 +1,16 @@
 function getClickedUserId(){
     const urlParams = new URLSearchParams(window.location.search)
     const userId = urlParams.get("userId")
+    console.log(userId)
     return userId
 }
 
 fillProfileDetails()
 function fillProfileDetails() {
     let userId = getClickedUserId()
+    console.log(userId)
+    toggleLoader(true)
+
     const url= `${baseUrl}/users/${userId}`
     axios.get(url)
     .then((response)=>{
@@ -34,7 +38,17 @@ function fillProfileDetails() {
             </div>
         `
         document.getElementById("profile-details").innerHTML = profileContent
-    })  
+    }).catch((error) => {
+        const message = error.response.data.message
+            showAlert(
+                "Failed to add the post",
+                message,
+                "error"
+            );
+    })
+    .finally(() => {
+        toggleLoader(false)
+    }); 
     
 }
 
@@ -42,9 +56,11 @@ getAllPosts()
 // // --START GET ALL POSTS--
 function getAllPosts(){
     let userId = getClickedUserId()
+    toggleLoader(true)
     const url= `${baseUrl}/users/${userId}/posts`
     axios.get(url)
     .then((response)=>{
+
         let data = response.data.data
         fillProfileDetails()
         document.getElementById("posts").innerHTML = ""
@@ -56,7 +72,7 @@ function getAllPosts(){
         console.error(error);
     })
     .finally(() => {
-        console.log("Request completed");
+        toggleLoader(false)
     });
 }
 function fillPost(post){

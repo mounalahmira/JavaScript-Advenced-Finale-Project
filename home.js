@@ -2,6 +2,7 @@ getAllPosts()
 
 // ===== START GET ALL POSTS =====
 function getAllPosts(reload = true,page = 1){
+    toggleLoader(true)
     const url= `${baseUrl}/posts?limit=2&page=${page}`
     axios.get(url)
     .then((response)=>{
@@ -14,10 +15,15 @@ function getAllPosts(reload = true,page = 1){
             fillPost(post)
         }
     }).catch((error) => {
-        console.error(error);
+        const message = error.response.data.message
+            showAlert(
+                "Failed to add the post",
+                message,
+                "error"
+            );
     })
     .finally(() => {
-        console.log("Request completed");
+        toggleLoader(false)
     });
 }
 // -- START FILL POST --
@@ -50,8 +56,8 @@ function fillPost(post){
     let content = 
         `
             <div id="post" class="post w-2/3 border-1 border-indigo-800 mx-auto my-10 rounded-2xl shadow-indigo-200 shadow-xl px-10 " >
-                <div onclick="userClicked(${post.author.id})" class="flex justify-between items-center ">
-                    <div on class="flex justify-start items-center cursor-pointer  py-2 gap-2">
+                <div  class="flex justify-between items-center">
+                    <div onclick="userClicked(${post.author.id})" class="flex justify-start items-center cursor-pointer  py-2 gap-2">
                         <div class="profil-pic w-14 h-14 rounded-full overflow-hidden">
                             <img src="${profileImage}" alt="" class="w-full h-full object-center object-cover">
                         </div>
@@ -145,6 +151,7 @@ function createNewPost(){
     }
     let url = ""
     if (isCreate) {
+        toggleLoader(true)
         url= `${baseUrl}/posts`
         axios.post(url,formData,{
         headers:headers
@@ -167,15 +174,17 @@ function createNewPost(){
                 message,
                 "error"
             );
+        }).finally(()=>{
+            toggleLoader(false)
         });
     }else{
         formData.append("_method","put")
+        toggleLoader(true)
         url= `${baseUrl}/posts/${postId}`
         axios.post(url,formData,{
             headers:headers
         })
         .then((response)=>{
-
             // Close the login Modal
             addPostModel.classList.add("hidden");
             getAllPosts()
@@ -195,7 +204,9 @@ function createNewPost(){
                     "error"
                 );
             }
-    );
+        ).finally(()=>{
+            toggleLoader(false)
+        });
     } 
 }
 // === END CREAT POST ===

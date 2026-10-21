@@ -87,9 +87,10 @@ menuButtons.forEach((btn, index) => {
 
 // === START INFINIT SCROLL ===
 window.addEventListener("scroll", ()=>{
-    const endOfPage = window.innerHeight + window.pageYOffset >= document.body.offsetHeight
+    const endOfPage = window.innerHeight + window.pageYOffset >= document.body.scrollHeight
+    console.log(window.innerHeight, window.pageYOffset, document.body.scrollHeight)
     if(endOfPage && currentPage < lastPage){
-        currentPage += 1
+        currentPage = currentPage + 1
         getAllPosts(false,currentPage)
     }
 })
@@ -188,7 +189,7 @@ function login(){
         "username" : username,
         "password" : password
     }
-
+    toggleLoader(true)
     const url= `${baseUrl}/login`
     axios.post(url,params)
     .then((response)=>{
@@ -215,6 +216,8 @@ function login(){
                 "Please check your username and password.",
                 "error"
             );
+        }).finally(()=>{
+            toggleLoader(false)
         });
 }
 // ==== END LOGIN ====
@@ -269,7 +272,7 @@ function regester(){
     console.log(name,username,password,profileImage)
 
     const url= `${baseUrl}/register`
-
+    toggleLoader(true)
     axios.post(url,formData)
     .then((response)=>{
         console.log(response.data.token)
@@ -295,6 +298,8 @@ function regester(){
                 message,
                 "warning"
             );
+        }).finally(()=>{
+            toggleLoader(false)
         });
 }
 // -- END REGISTER --
@@ -305,8 +310,10 @@ function regester(){
 
 // ===== START LOGOUT =====
 function logout(){
+    toggleLoader(true)
     localStorage.removeItem("token")
     localStorage.removeItem("user")
+    toggleLoader(false)
     // Show success alert
         showAlert(
             "Logout Successful",
@@ -374,10 +381,12 @@ function confirmPostDelete(){
     const headers = {
         "authorization":`Bearer ${token}`
     }
+    toggleLoader(true)
     axios.delete(url,{
         headers:headers
     })
     .then((response)=>{
+        toggleLoader(true)
         getAllPosts()
         // Show success alert
         showAlert(
@@ -398,4 +407,12 @@ function confirmPostDelete(){
 // === END DELETE POST ===
 
 
-
+// === lOADER ===
+function toggleLoader(show = true){
+    if(show){
+        document.getElementById("loader").style.visibility = "visible"
+    }else{
+        document.getElementById("loader").style.visibility = "hidden"
+    }
+}
+// === lOADER ===
