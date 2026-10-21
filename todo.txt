@@ -1,0 +1,11 @@
+ToDo:
+- change the alert to a function.
+- the alert function take 3 param. the title, message and the type.
+- change the colors of the alert based on the type.
+- make the alert disappers after seconds
+- make the code cleaner.
+
+ToDo:
+- fix the buge in the profile link
+- when i click in the porofil link and i'm in pforile.html it gives me "undefined" in the userId=${user.id}
+- but when i click in the porofil link and i'm in home.html it works perfectly
